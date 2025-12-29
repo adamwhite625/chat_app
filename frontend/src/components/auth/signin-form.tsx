@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useNavigate } from "react-router";
 
 const signInSchema = z.object({
   username: z.string().min(3, "Tên đăng nhập phải có ít nhất 3 ký tự"),
@@ -32,11 +34,18 @@ export function SigninForm({
     resolver: zodResolver(signInSchema),
   });
 
+  const { signIn } = useAuthStore();
+  const navigate = useNavigate();
+
   const onSubmit = async (data: SignInFormValues) => {
     //const { firstname, lastname, username, email, password } = data;
     // gọi backend để signup
     //await signUp(username, password, email, firstname, lastname);
     //navigate("/signin");
+
+    const { username, password } = data;
+    await signIn(username, password);
+    navigate("/");
   };
 
   return (
