@@ -88,7 +88,6 @@ export const acceptFriendRequest = async (req, res) => {
 
     await FriendRequest.findByIdAndDelete(requestId);
 
-    //lean trả về javascript object thay vì mongoose document
     const from = await User.findById(request.from)
       .select("_id displayName avatarUrl")
       .lean();
@@ -149,8 +148,8 @@ export const getAllFriends = async (req, res) => {
         },
       ],
     })
-      .populate("userA", "_id displayName avatarUrl")
-      .populate("userB", "_id displayName avatarUrl")
+      .populate("userA", "_id displayName avatarUrl username")
+      .populate("userB", "_id displayName avatarUrl username")
       .lean();
 
     if (!friendships.length) {
@@ -158,7 +157,7 @@ export const getAllFriends = async (req, res) => {
     }
 
     const friends = friendships.map((f) =>
-      f.userA._id.toString() === userId.toString() ? f.userB : f.userA
+      f.userA._id.toString() === userId.toString() ? f.userB : f.userA,
     );
 
     return res.status(200).json({ friends });
