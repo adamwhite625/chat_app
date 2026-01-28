@@ -26,9 +26,12 @@ export const useFriendStore = create<FriendState>((set, get) => ({
       set({ loading: true });
       const resultMessage = await friendService.sendFriendRequest(to, message);
       return resultMessage;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Lỗi xảy ra khi addFriend", error);
-      return "Lỗi xảy ra khi gửi kết bạn. Hãy thử lại";
+      const errorMessage =
+        error?.response?.data?.message ||
+        "Lỗi xảy ra khi gửi kết bạn. Hãy thử lại";
+      return errorMessage;
     } finally {
       set({ loading: false });
     }

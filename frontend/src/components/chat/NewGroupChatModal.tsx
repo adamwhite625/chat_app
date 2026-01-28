@@ -49,7 +49,7 @@ const NewGroupChatModal = () => {
       await createConversation(
         "group",
         groupName,
-        invitedUsers.map((u) => u._id)
+        invitedUsers.map((u) => u._id),
       );
 
       setSearch("");
@@ -57,7 +57,7 @@ const NewGroupChatModal = () => {
     } catch (error) {
       console.error(
         "Lỗi xảy ra khi handleSubmit trong NewGroupChatModal:",
-        error
+        error,
       );
     }
   };
@@ -65,7 +65,7 @@ const NewGroupChatModal = () => {
   const filteredFriends = friends.filter(
     (friend) =>
       friend.displayName.toLowerCase().includes(search.toLowerCase()) &&
-      !invitedUsers.some((u) => u._id === friend._id)
+      !invitedUsers.some((u) => u._id === friend._id),
   );
 
   return (
