@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  # 1. Database Service (MongoDB)
+  mongo:
+    image: mongo:latest
+    container_name: chatapp_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  # 2. Backend Service
+  backend:
+    build: ./backend
+    container_name: chatapp_backend
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=5001
+      - MONGODB_CONNECTIONSTRING=mongodb://mongo:27017/chatapp
+
+      - CLIENT_URL=http://localhost:5173
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  # 3. Frontend Service
+  frontend:
+    build: ./frontend
+    container_name: chatapp_frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5001/api
+      - VITE_SOCKET_URL=http://localhost:5001/
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
